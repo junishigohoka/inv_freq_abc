@@ -1,0 +1,10 @@
+cont_Georgia 24
+cont_medlong 132
+cont_short 24
+cont_resident 46
+isl_Canary 20
+isl_Madeira 26
+isl_Azores 26
+isl_CapeVerde 22
+isl_Crete 18
+isl_Mallorca 20

@@ -1,0 +1,5 @@
+nseqs 24 132 24 46 20 26 26 22 18 20
+nsites 10000
+N_anc logunif(1e5, 1e6)
+Ns_N0 logunif(1e5, 1e6)
+T_split 5e6
