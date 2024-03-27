@@ -154,13 +154,13 @@ func get_fst(p1, p2, n1, n2,     a, b, c, h1, h2){
 # Header
 func print_header(pops, simid,    pop, pop1, pop2){
         printf "simid"
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                 printf " pi_%d", pop
         }
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                 printf " theta_%d", pop
         }
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                 printf " D_%d", pop
         }
         for(pop1=1;pop1<=length(pops)-1;pop1++){
@@ -253,15 +253,15 @@ END{
         # simid
         printf "%d", simid
         # pi
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                 printf " %f", pi[pop]
         }
         # theta
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                 printf " %f", theta[pop]
         }
         # Tajima's D
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                 if(D[pop] == "NA"){
                         printf " %s", D[pop]
                 }

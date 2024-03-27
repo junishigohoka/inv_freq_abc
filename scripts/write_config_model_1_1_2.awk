@@ -40,6 +40,8 @@ func get_mig(pops, mig,      i, j, mig_geo_medlong, mig_medlong_short, mig_mac, 
         mig[2][1] = mig_geo_medlong
         mig[2][3] = mig_medlong_short
         mig[3][2] = mig_medlong_short
+        mig[3][4] = mig_short_res
+        mig[4][3] = mig_short_res
         for(i=5;i<=8;i++){
                 mig[4][i] = mig_res_mac
                 mig[i][4] = mig_res_mac
@@ -59,12 +61,12 @@ func get_mig(pops, mig,      i, j, mig_geo_medlong, mig_medlong_short, mig_mac, 
 
 func make_log_line(N_anc, Ns_N0, T_split, mig, pops, simid, seed,    pop, str, i, j){
         str = simid " " seed " " N_anc
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                 str = str " " Ns_N0[pop] 
         }
         str = str " " T_split 
-        for(i in mig){
-                for(j in mig){
+        for(i=1;i<=length(pops);i++){
+                for(j=1;j<=length(pops);j++){
                         if(i!=j){
                                 str = str " " mig[i][j]
                         }
@@ -76,12 +78,12 @@ func make_log_line(N_anc, Ns_N0, T_split, mig, pops, simid, seed,    pop, str, i
 
 func make_log_header(pops,    pop, pop1, pop2, str){
         str="simid seed N_anc"
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                str=str " N_N0_" pop
         }
         str=str " T_split"
-        for(pop1 in pops){
-                for(pop2 in pops){
+        for(pop1=1;pop1<=length(pops);pop1++){
+                for(pop2=1;pop2<=length(pops);pop2++){
                         if(pop1 != pop2){
                                 str=str " mig_" pop1 "_" pop2 
                         }
@@ -113,7 +115,7 @@ END{
         # Print nseqs
         print_nseqs(nseqs)
         # Print nsites
-        printf "nsites %d\n", 1000
+        printf "nsites %d\n", nsites
         # Print N_anc
         printf "N_anc %d\n", N_anc
         # Print Ns_N0
@@ -121,8 +123,8 @@ END{
         # Print T_split
         printf "T_split %d\n", T_split
         # Print mig
-        for(pop1 in mig){
-                for(pop2 in mig){
+        for(pop1=0;pop1<=length(pops);pop1++){
+                for(pop2=0;pop2<=length(pops);pop2++){
                         if(pop1 != pop2 && mig[pop1][pop2] > 0){
                                 printf "mig %d %d %f\n", pop1, pop2, mig[pop1][pop2]
                         }

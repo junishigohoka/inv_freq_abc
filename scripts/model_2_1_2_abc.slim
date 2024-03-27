@@ -1,0 +1,52 @@
+initialize() {
+        rec = 4.6e-9;
+        initializeTreeSeq();
+        initializeMutationRate(0);
+        initializeMutationType("m1", 0.5, "f", 0.0);
+        initializeGenomicElementType("g1", m1, 1.0);
+        initializeGenomicElement(g1, 0, 1000000 - 1);
+
+        initializeRecombinationRate(rec * scale);
+        setwd("/home/ishigohoka/projects/Miriam/PhD/PhD/inv_freq_abc/output/demography/post_ms_slim");
+}
+1 early() {
+        N0 = 4.252830167e+05;
+        N1 = 1.980610000e+00 * N0;
+        sim.addSubpop(subpopID="p0",
+                        size = asInteger(N0 / scale)
+                     );
+        sim.addSubpopSplit(subpopID= "p1",
+                        size= asInteger(N1 / scale),
+                        sourceSubpop=p0
+                        );
+}
+t0 early(){
+        // Read population size ratio
+        N0 = 4.252830167e+05;
+        lines = readFile("model_2_1_2_posterior_med_N_for_slim.txt");
+        for(i in 1:(length(lines)-1)){ //starting from pop2 in the second line (index 1)
+                line = lines[i];
+                        sim.addSubpopSplit(subpopID=paste0(c("p", i+1)),
+                                        size = asInteger(N0 * asFloat(strsplit(line, " ")[1]) / scale),
+                                        sourceSubpop=p0
+                                        );
+
+        }
+        // Read migration rates
+        lines = readFile("model_2_1_2_posterior_med_mig_for_slim.txt");
+        subpops = sim.subpopulations;
+        for(line in lines){
+                pops = strsplit(strsplit(line, " ")[0], "_")[c(1,2)];
+                if(pops[0] < pops[1]){
+                        mig = asFloat(strsplit(line, " ")[1]);
+                        p_a = subpops[subpops.id == pops[0]];
+                        p_b = subpops[subpops.id == pops[1]];
+                        p_a.setMigrationRates(p_b, mig);
+                        p_b.setMigrationRates(p_a, mig);
+                }
+        }
+}
+t1 late() {
+        sim.treeSeqOutput(paste0(c("./model_2_1_2_posterior_med_", scale, "_", rep, ".tree")));
+
+}

@@ -18,8 +18,8 @@ func get_Ns_N0(npops, Ns_N0,    i){
 
 func get_mig(pops, mig,      i, j, mig_geo_medlong, mig_medlong_short, mig_mac, mig_res_mac, mig_azo_cap, mig_can_mad){
         # Initialise migration matrix
-        for(i in pops){
-                for(j in pops){
+        for(i=0;i<=length(pops);i++){
+                for(j=0;j<=length(pops);j++){
                         if(i != j){
                                 mig[i][j]=0
                         }
@@ -29,6 +29,7 @@ func get_mig(pops, mig,      i, j, mig_geo_medlong, mig_medlong_short, mig_mac, 
                 }
         }
         # Sample migration rates
+        mig_anc_geo = logunif(1e-9, 1e-3)
         mig_geo_medlong = logunif(1e-9, 1e-3)
         mig_medlong_short = logunif(1e-9, 1e-3)
         mig_short_res = logunif(1e-9, 1e-3)
@@ -36,10 +37,14 @@ func get_mig(pops, mig,      i, j, mig_geo_medlong, mig_medlong_short, mig_mac, 
         mig_res_mac = logunif(1e-9, mig_mac) # mig between isl and cont should not exceed that between islands
         mig_azo_cap = logunif(mig_mac, 1e-3) # mig between azo and cap should be higher than between azo/cap and can/mad
         mig_can_mad = logunif(mig_mac, 1e-3) # mig between azo and cap should be higher than between azo/cap and can/mad
+        mig[0][1] = mig_anc_geo
+        mig[1][0] = mig_anc_geo
         mig[1][2] = mig_geo_medlong
         mig[2][1] = mig_geo_medlong
         mig[2][3] = mig_medlong_short
         mig[3][2] = mig_medlong_short
+        mig[3][4] = mig_short_res
+        mig[4][3] = mig_short_res
         for(i=5;i<=8;i++){
                 mig[4][i] = mig_res_mac
                 mig[i][4] = mig_res_mac
@@ -59,12 +64,12 @@ func get_mig(pops, mig,      i, j, mig_geo_medlong, mig_medlong_short, mig_mac, 
 
 func make_log_line(N_anc, Ns_N0, T_geo,  T_split, mig, pops, simid, seed,    pop, str, i, j){
         str = simid " " seed " " N_anc
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                 str = str " " Ns_N0[pop] 
         }
-        str = str " " T_split " " T_geo
-        for(i in mig){
-                for(j in mig){
+        str = str " " T_geo " " T_split
+        for(i=0;i<=length(pops);i++){
+                for(j=0;j<=length(pops);j++){
                         if(i!=j){
                                 str = str " " mig[i][j]
                         }
@@ -76,12 +81,12 @@ func make_log_line(N_anc, Ns_N0, T_geo,  T_split, mig, pops, simid, seed,    pop
 
 func make_log_header(pops,    pop, pop1, pop2, str){
         str="simid seed N_anc"
-        for(pop in pops){
+        for(pop=1;pop<=length(pops);pop++){
                str=str " N_N0_" pop
         }
         str=str " T_geo T_split"
-        for(pop1 in pops){
-                for(pop2 in pops){
+        for(pop1=0;pop1<=length(pops);pop1++){
+                for(pop2=0;pop2<=length(pops);pop2++){
                         if(pop1 != pop2){
                                 str=str " mig_" pop1 "_" pop2 
                         }
@@ -115,7 +120,7 @@ END{
         # Print nseqs
         print_nseqs(nseqs)
         # Print nsites
-        printf "nsites %d\n", 1000
+        printf "nsites %d\n", nsites
         # Print N_anc
         printf "N_anc %d\n", N_anc
         # Print Ns_N0
@@ -124,8 +129,8 @@ END{
         printf "T_split %d\n", T_split
         printf "T_geo %d\n", T_geo
         # Print mig
-        for(pop1 in mig){
-                for(pop2 in mig){
+        for(pop1=0;pop1<=length(pops);pop1++){
+                for(pop2=0;pop2<=length(pops);pop2++){
                         if(pop1 != pop2 && mig[pop1][pop2] > 0){
                                 printf "mig %d %d %f\n", pop1, pop2, mig[pop1][pop2]
                         }
@@ -137,4 +142,3 @@ END{
         }
         print make_log_line(N_anc, Ns_N0, T_geo, T_split, mig, pops, simid, seed) >> logfile
 }
-

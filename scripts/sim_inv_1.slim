@@ -1,0 +1,161 @@
+initialize() {
+	initializeMutationRate(0);
+	initializeMutationType("m0", 0.5, "f", 0.0);
+	initializeGenomicElementType("g1", m0, 1);
+	m0.convertToSubstitution = F;
+	initializeGenomicElement(g1, 0, 1);
+	initializeRecombinationRate(0);
+	defineConstant("scale", 500);
+}
+1 late() {
+	N0 = 4.252830167e+05;
+	N1 = 1.980610000e+00 * N0;
+	// pop0
+	sim.addSubpop(subpopID="p0",
+		size = asInteger(N0 / scale)
+		);
+	
+	// Give inversion in the ancestral population at frequency p_0
+	p_0 = -h_0/(1 - 2*h_0);
+	if(p_0 <0){
+		p_0 = 0;
+	}
+	if(p_0 > 1){
+		p_o = 1;
+	}
+	inverted = sample(p0.genomes, asInteger(p_0 * length(p0.genomes)));
+	inverted.addNewDrawnMutation(m0, 0);
+	sim.addSubpopSplit(subpopID= "p1",
+		size= asInteger(N1 / scale),
+		sourceSubpop=p0
+		);
+	// Read migration rates
+	lines = readFile("/home/ishigohoka/projects/Miriam/PhD/PhD/inv_freq_abc/output/demography/post_ms_slim/model_2_1_2_posterior_med_mig_for_slim.txt");
+	subpops = sim.subpopulations;
+	line=lines[0];
+	pops = strsplit(strsplit(line, " ")[0], "_")[c(1,2)];
+	if(pops[0] < pops[1]){
+		mig = asFloat(strsplit(line, " ")[1]);
+		p_a = subpops[subpops.id == pops[0]];
+		p_b = subpops[subpops.id == pops[1]];
+		p_a.setMigrationRates(p_b, mig);
+		p_b.setMigrationRates(p_a, mig);
+	}
+}
+390 early(){
+	// Read population size ratio
+	N0 = 4.252830167e+05;
+	lines = readFile("/home/ishigohoka/projects/Miriam/PhD/PhD/inv_freq_abc/output/demography/post_ms_slim/model_2_1_2_posterior_med_N_for_slim.txt");
+	for(i in 1:(length(lines)-1)){ //starting from pop2 in the second line (index 1)
+		line = lines[i];
+		sim.addSubpopSplit(subpopID=paste0(c("p", i+1)),
+			size = asInteger(N0 * asFloat(strsplit(line, " ")[1]) / scale),
+			sourceSubpop=p0
+			);
+	
+	}
+	// Read migration rates
+	lines = readFile("/home/ishigohoka/projects/Miriam/PhD/PhD/inv_freq_abc/output/demography/post_ms_slim/model_2_1_2_posterior_med_mig_for_slim.txt");
+	subpops = sim.subpopulations;
+	for(line in lines){
+		pops = strsplit(strsplit(line, " ")[0], "_")[c(1,2)];
+		if(pops[0] < pops[1]){
+			mig = asFloat(strsplit(line, " ")[1]);
+			p_a = subpops[subpops.id == pops[0]];
+			p_b = subpops[subpops.id == pops[1]];
+			p_a.setMigrationRates(p_b, mig);
+			p_b.setMigrationRates(p_a, mig);
+		}
+	}
+}
+
+1: mutationEffect(m0, p0){
+	if (homozygous)
+		return 1.0 + s_0 * scale;
+	else
+		return 1.0 + h_0 * s_0 * scale;
+}
+1: mutationEffect(m0, p1){
+	if (homozygous)
+		return 1.0 + s_1 * scale;
+	else
+		return 1.0 + h_1 * s_1 * scale;
+}
+390: mutationEffect(m0, p2){
+	if (homozygous)
+		return 1.0 + s_2 * scale;
+	else
+		return 1.0 + h_2 * s_2 * scale;
+}
+390: mutationEffect(m0, p3){
+	if (homozygous)
+		return 1.0 + s_3 * scale;
+	else
+		return 1.0 + h_3 * s_3 * scale;
+}
+390: mutationEffect(m0, p4){
+	if (homozygous)
+		return 1.0 + s_4 * scale;
+	else
+		return 1.0 + h_4 * s_4 * scale;
+}
+390: mutationEffect(m0, p5){
+	if (homozygous)
+		return 1.0 + s_5 * scale;
+	else
+		return 1.0 + h_5 * s_5 * scale;
+}
+390: mutationEffect(m0, p6){
+	if (homozygous)
+		return 1.0 + s_6 * scale;
+	else
+		return 1.0 + h_6 * s_6 * scale;
+}
+390: mutationEffect(m0, p7){
+	if (homozygous)
+		return 1.0 + s_7 * scale;
+	else
+		return 1.0 + h_7 * s_7 * scale;
+}
+390: mutationEffect(m0, p8){
+	if (homozygous)
+		return 1.0 + s_8 * scale;
+	else
+		return 1.0 + h_8 * s_8 * scale;
+}
+
+390: mutationEffect(m0, p9){
+	if (homozygous)
+		return 1.0 + s_9 * scale;
+	else
+		return 1.0 + h_9 * s_9 * scale;
+}
+390: mutationEffect(m0, p10){
+	if (homozygous)
+		return 1.0 + s_10 * scale;
+	else
+		return 1.0 + h_10 * s_10 * scale;
+}
+//390:2119 early(){
+//	pops=sim.subpopulations;
+//	for(i in 1:(length(sim.subpopulations)-1)){
+//		pop=sim.subpopulations[i];
+//		//		cat(c(format("%d", length(pop.genomes)), " "));
+//		cat(c(format("%.2f", sum(pop.genomes.countOfMutationsOfType(m0)/length(pop.genomes))), " "));
+//	}
+//	cat("\n");
+//}
+423 late() {
+	cat(c(simid, " "));
+	ninds_pops = c(0, 12, 66, 12, 23, 10, 13, 13, 11, 9, 10);
+	rep = 0;
+	pops = sim.subpopulations;
+	for(i in 1:(length(pops)-1)){
+		//print(i);
+		pop = pops[i];
+		ninds = ninds_pops[i];
+		inds=sample(pop.individuals, ninds);
+		cat(c(format("%.2f", sum(inds.genomes.countOfMutationsOfType(m0))/length(inds.genomes)), " "));
+	}
+	cat("\n");
+}
