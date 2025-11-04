@@ -24,7 +24,7 @@ BEGIN{
                 printf "%s_%d ", prefix, i
                 printf "%d ", unif(0, 1e9)
                 h = unif(-2,0)
-                s = -logunif(1e-9,0.1)
+                s = -logunif(1e-7, 0.1)
                 for(j=0;j<=10;j++){
                         printf "%.3f ", h
                 }

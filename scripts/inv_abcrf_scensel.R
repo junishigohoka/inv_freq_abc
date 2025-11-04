@@ -1,11 +1,10 @@
-setwd("/home/ishigohoka/projects/Miriam/PhD/PhD/inv_freq_abc/output/inv/abcrf/modsel")
+setwd("/home/ishigohoka/projects/Miriam/PhD/PhD/inv_freq_abc/output/inv/abcrf/scensel")
 
 library(abcrf)
 library(abc)
 
 
-#models <- paste0("sim_inv_1_", 1:4)
-models <- c("sim_inv_0", "sim_inv_1", "sim_inv_2")
+models <- paste0("sim_inv_2_", 1:4)
 
 
 # Read observed data
@@ -120,16 +119,15 @@ if(length(list.files(pattern = "modsel_rf.rds")) == 0){
                              paral = T,
                              paral.predict = T
         )
-        saveRDS(modsel_rf, "modsel_rf.rds")
+        saveRDS(modsel_rf, "scensel_rf.rds")
 }else{
-        modsel_rf <- readRDS("modsel_rf.rds")
+        modsel_rf <- readRDS("scensel_rf.rds")
 }
 
 
 # pca
 
 sim_models <- as.character(sim_models)
-
 
 pdf("gof_pca.pdf", height = 3.5*2, width = 3.5*3)
 par(mfrow = c(2,3),
@@ -144,12 +142,14 @@ mtext(1,
       outer=T,
       text = "PC1"
 )
-
 mtext(2,
       outer=T,
       text = "PC2"
 )
 dev.off()
+
+
+
 
 
 

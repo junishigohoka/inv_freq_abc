@@ -25,7 +25,7 @@ BEGIN{
                 printf "%d ", unif(0, 1e9)
                 for(j=0;j<=10;j++){
                         h[j] = unif(-2,0)
-                        s[j] = -logunif(1e-9,0.1)
+                        s[j] = -logunif(1e-7,0.1)
                 }
                 for(j=0;j<=10;j++){
                         printf "%.3f ", h[j]

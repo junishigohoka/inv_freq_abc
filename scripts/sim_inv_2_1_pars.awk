@@ -23,22 +23,14 @@ BEGIN{
         for(i=0;i<nsims;i++){
                 printf "%s_%d ", prefix, i
                 printf "%d ", unif(0, 1e9)
-                h_cont = unif(-2,0)
-                h_isl = unif(-2,0)
-                s_cont = -logunif(1e-7,0.1)
-                s_isl = -logunif(1e-7,0.1)
-                for(j=0;j<=4;j++){
-                        printf "%.3f ", h_cont
+                s = logunif(1e-7,0.1)
+                p_opt = unif(0, 0.5)
+                for(j=0;j<=10;j++){
+                        printf "%e ", s
                 }
-                for(j=5;j<=10;j++){
-                        printf "%.3f ", h_isl
+                for(j=0;j<10;j++){
+                        printf "%.3f ", p_opt
                 }
-                for(j=0;j<=4;j++){
-                        printf "%e ", s_cont
-                }
-                for(j=5;j<10;j++){
-                        printf "%e ", s_isl
-                }
-                printf "%e\n", s_isl
+                printf "%.3f\n", p_opt
         }
 }

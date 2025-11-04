@@ -1,0 +1,16 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+output/demography/ms/model_1_1_1/
+output/demography/ms/model_1_1_2/
+output/demography/ms/model_1_2_1/
+output/demography/ms/model_1_2_2/
+output/demography/ms/model_2_1_1/
+output/demography/ms/model_2_1_2/
+output/demography/ms/model_2_2_1/
+output/demography/ms/model_2_2_2/
+output/demography/ms/old/
+output/inv/slim/sim_inv_1/
+output/inv/slim/sim_inv_2/
+output/

@@ -69,5 +69,3 @@ saveRDS(posterior,
 
 
 
-
-

@@ -503,7 +503,12 @@ For the second and third, I will have 4 scenarios
 
 
 ## Simulation
-### Model 1: Overdominance
+
+
+Models
+
+1. Overdominance
+2. Negative frequency-dependent selection
 
 Scenarios
 
@@ -520,11 +525,33 @@ model=sim_inv_1
 
 for scenario in {0..4}
 do
-        for rep in {0..9}
+        for rep in {0..99}
         do
                 mkdir -p output/inv/slim/$model/$scenario/$rep/
         done
 done
+
+
+model=sim_inv_2
+for scenario in {1..4}
+do
+        for rep in {0..99}
+        do
+                mkdir -p output/inv/slim/$model/$scenario/$rep/
+        done
+done
+
+scenario=2
+for model in sim_inv_1 sim_inv_2
+do
+        for rep in {0..99}
+        do
+                mkdir -p output/inv/slim/$model/$scenario/$rep/
+        done
+done
+
+
+
 
 ```
 
@@ -532,7 +559,7 @@ done
 model=sim_inv_1
 for scenario in {0..4}
 do
-        for rep in {0..9}
+        for rep in {0..99}
         do
                 for rep1 in {0..99}
                 do
@@ -540,6 +567,32 @@ do
                 done
         done
 done > scripts/run_sim_inv_sim_inv_1_commands.list
+
+
+model=sim_inv_2
+for scenario in {1..4}
+do
+        for rep in {0..99}
+        do
+                for rep1 in {0..99}
+                do
+                        echo sbatch scripts/run_sim_inv.sh $model $scenario ${rep}_${rep1} output/inv/slim/$model/$scenario/$rep
+                done
+        done
+done > scripts/run_sim_inv_sim_inv_2_commands.list
+
+scenario=2
+for model in sim_inv_1 sim_inv_2
+do
+        for rep in {0..99}
+        do
+                for rep1 in {0..99}
+                do
+                        echo sbatch scripts/run_sim_inv.sh $model $scenario ${rep}_${rep1} output/inv/slim/$model/$scenario/$rep
+                done
+        done
+done > scripts/run_sim_inv_rerun_commands.list
+
 
 ```
 
@@ -549,6 +602,9 @@ In screen
 ```bash
 
 submit_sbatch.sh -i scripts/run_sim_inv_sim_inv_1_commands.list -p slim -r 200 -w 50
+submit_sbatch.sh -i scripts/run_sim_inv_sim_inv_2_commands.list -p slim -r 200 -w 50
+
+submit_sbatch.sh -i scripts/run_sim_inv_rerun_commands.list -p slim -r 200 -w 100
 
 ```
 
@@ -560,7 +616,22 @@ for scenario in {0..4}
 do
         for filetype in out log
         do
-                for rep in {0..9}
+                for rep in {0..99}
+                do
+                        for rep1 in {0..99}
+                        do
+                                cat output/inv/slim/$model/$scenario/$rep/${model}_${scenario}_${rep}_${rep1}_$filetype.txt
+                        done
+                done | bgzip > output/inv/slim/summary/${model}_${scenario}_$filetype.txt.gz
+        done
+done 
+
+model=sim_inv_2
+for scenario in {1..4}
+do
+        for filetype in out log
+        do
+                for rep in {0..99}
                 do
                         for rep1 in {0..99}
                         do
@@ -571,21 +642,88 @@ do
 done 
 
 
+
+for model in sim_inv_1 sim_inv_2
+do
+        for filetype in out log
+        do
+                for scenario in {1..4}
+                do
+                        for rep in {0..99}
+                        do
+                                for rep1 in {0..99}
+                                do
+                                        cat output/inv/slim/$model/$scenario/$rep/${model}_${scenario}_${rep}_${rep1}_$filetype.txt
+                                done
+                        done 
+                done | bgzip > output/inv/slim/summary/${model}_$filetype.txt.gz
+        done 
+done
+
+
+cp output/inv/slim/summary/sim_inv_1_0_out.txt.gz output/inv/slim/summary/sim_inv_0_out.txt.gz
+cp output/inv/slim/summary/sim_inv_1_0_log.txt.gz output/inv/slim/summary/sim_inv_0_log.txt.gz
+
 ```
 
 
-### Model 2: NFDS
 
-To be done...
+
+
 
 ## ABC
 
 ### Model selection
 
+3 models (neutral overdominance vs NFDS)
+
+
 ```bash
+
 sbatch scripts/inv_abcrf_modsel.sh
 
 ```
+
+
+NFDS was chosen
+
+4 scenarios of NFDS model
+
+```bash
+
+sbatch scripts/inv_abcrf_scensel.sh
+
+```
+
+
+sim_inv_3 (cont vs isl) was chosen
+
+
+I ran regAbcrf for each of 4 parameters.
+
+```bash
+
+for i in {1..4}
+do
+        sbatch scripts/inv_abcrf_regAbcrf.sh $i
+done
+
+```
+
+
+I inferred parameters
+
+```bash
+
+for i in {1..4}
+do
+        sbatch scripts/inv_abcrf_parinf.sh $i
+done
+
+```
+
+
+
 
 
 

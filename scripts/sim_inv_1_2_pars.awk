@@ -25,8 +25,8 @@ BEGIN{
                 printf "%d ", unif(0, 1e9)
                 h_mig = unif(-2,0)
                 h_res = unif(-2,0)
-                s_mig = -logunif(1e-9,0.1)
-                s_res = -logunif(1e-9,0.1)
+                s_mig = -logunif(1e-7,0.1)
+                s_res = -logunif(1e-7,0.1)
                 for(j=0;j<=3;j++){
                         printf "%.3f ", h_mig
                 }
@@ -39,6 +39,6 @@ BEGIN{
                 for(j=4;j<10;j++){
                         printf "%e ", s_res
                 }
-                printf "%e\n", s_isl
+                printf "%e\n", s_res
         }
 }

@@ -16,14 +16,7 @@ initialize() {
 		);
 	
 	// Give inversion in the ancestral population at frequency p_0
-	p_0 = -h_0/(1 - 2*h_0);
-	if(p_0 <0){
-		p_0 = 0;
-	}
-	if(p_0 > 1){
-		p_o = 1;
-	}
-	inverted = sample(p0.genomes, asInteger(p_0 * length(p0.genomes)));
+	inverted = sample(p0.genomes, asInteger(p_opt_0 * length(p0.genomes)));
 	inverted.addNewDrawnMutation(m0, 0);
 	sim.addSubpopSplit(subpopID= "p1",
 		size= asInteger(N1 / scale),
@@ -42,6 +35,31 @@ initialize() {
 		p_b.setMigrationRates(p_a, mig);
 	}
 }
+//1: late(){
+//	pops=sim.subpopulations;
+//	for(i in 0:(length(sim.subpopulations)-1)){
+//		pop=sim.subpopulations[i];
+//		//		cat(c(format("%d", length(pop.genomes)), " "));
+//		cat(c(format("%.2f", sum(pop.genomes.countOfMutationsOfType(m0)/length(pop.genomes))), " "));
+//	}
+//	cat("\n");
+//}
+
+1: mutationEffect(m0, p0){
+	p_dif = sim.mutationFrequencies(p0, mut) - p_opt_0;
+	if (homozygous)
+		return 1.0 - s_0 * p_dif * scale;
+	else
+		return 1.0 - h_0 * s_0 * p_dif * scale;
+}
+1: mutationEffect(m0, p1){
+	p_dif = sim.mutationFrequencies(p1, mut) - p_opt_1;
+	if (homozygous)
+		return 1.0 - s_1 * p_dif * scale;
+	else
+		return 1.0 - h_1 * s_1 * p_dif * scale;
+}
+
 390 early(){
 	// Read population size ratio
 	N0 = 4.252830167e+05;
@@ -69,83 +87,75 @@ initialize() {
 	}
 }
 
-1: mutationEffect(m0, p0){
-	if (homozygous)
-		return 1.0 + s_0 * scale;
-	else
-		return 1.0 + h_0 * s_0 * scale;
-}
-1: mutationEffect(m0, p1){
-	if (homozygous)
-		return 1.0 + s_1 * scale;
-	else
-		return 1.0 + h_1 * s_1 * scale;
-}
+
 390: mutationEffect(m0, p2){
+	p_dif = sim.mutationFrequencies(p2, mut) - p_opt_2;
 	if (homozygous)
-		return 1.0 + s_2 * scale;
+		return 1.0 - s_2 * p_dif * scale;
 	else
-		return 1.0 + h_2 * s_2 * scale;
-}
-390: mutationEffect(m0, p3){
-	if (homozygous)
-		return 1.0 + s_3 * scale;
-	else
-		return 1.0 + h_3 * s_3 * scale;
-}
-390: mutationEffect(m0, p4){
-	if (homozygous)
-		return 1.0 + s_4 * scale;
-	else
-		return 1.0 + h_4 * s_4 * scale;
-}
-390: mutationEffect(m0, p5){
-	if (homozygous)
-		return 1.0 + s_5 * scale;
-	else
-		return 1.0 + h_5 * s_5 * scale;
-}
-390: mutationEffect(m0, p6){
-	if (homozygous)
-		return 1.0 + s_6 * scale;
-	else
-		return 1.0 + h_6 * s_6 * scale;
-}
-390: mutationEffect(m0, p7){
-	if (homozygous)
-		return 1.0 + s_7 * scale;
-	else
-		return 1.0 + h_7 * s_7 * scale;
-}
-390: mutationEffect(m0, p8){
-	if (homozygous)
-		return 1.0 + s_8 * scale;
-	else
-		return 1.0 + h_8 * s_8 * scale;
+		return 1.0 - h_2 * s_2 * p_dif * scale;
 }
 
-390: mutationEffect(m0, p9){
+390: mutationEffect(m0, p3){
+	p_dif = sim.mutationFrequencies(p3, mut) - p_opt_3;
 	if (homozygous)
-		return 1.0 + s_9 * scale;
+		return 1.0 - s_3 * p_dif * scale;
 	else
-		return 1.0 + h_9 * s_9 * scale;
+		return 1.0 - h_3 * s_3 * p_dif * scale;
+}
+390: mutationEffect(m0, p4){
+	p_dif = sim.mutationFrequencies(p4, mut) - p_opt_4;
+	if (homozygous)
+		return 1.0 - s_4 * p_dif * scale;
+	else
+		return 1.0 - h_4 * s_4 * p_dif * scale;
+}
+390: mutationEffect(m0, p5){
+	p_dif = sim.mutationFrequencies(p5, mut) - p_opt_5;
+	if (homozygous)
+		return 1.0 - s_5 * p_dif * scale;
+	else
+		return 1.0 - h_5 * s_5 * p_dif * scale;
+}
+390: mutationEffect(m0, p6){
+	p_dif = sim.mutationFrequencies(p6, mut) - p_opt_6;
+	if (homozygous)
+		return 1.0 - s_6 * p_dif * scale;
+	else
+		return 1.0 - h_6 * s_6 * p_dif * scale;
+}
+390: mutationEffect(m0, p7){
+	p_dif = sim.mutationFrequencies(p7, mut) - p_opt_7;
+	if (homozygous)
+		return 1.0 - s_7 * p_dif * scale;
+	else
+		return 1.0 - h_7 * s_7 * p_dif * scale;
+}
+390: mutationEffect(m0, p8){
+	p_dif = sim.mutationFrequencies(p8, mut) - p_opt_8;
+	if (homozygous)
+		return 1.0 - s_8 * p_dif * scale;
+	else
+		return 1.0 - h_8 * s_8 * p_dif * scale;
+}
+390: mutationEffect(m0, p9){
+	p_dif = sim.mutationFrequencies(p9, mut) - p_opt_9;
+	if (homozygous)
+		return 1.0 - s_9 * p_dif * scale;
+	else
+		return 1.0 - h_9 * s_9 * p_dif * scale;
 }
 390: mutationEffect(m0, p10){
+	p_dif = sim.mutationFrequencies(p10, mut) - p_opt_10;
 	if (homozygous)
-		return 1.0 + s_10 * scale;
+		return 1.0 - s_10 * p_dif * scale;
 	else
-		return 1.0 + h_10 * s_10 * scale;
+		return 1.0 - h_10 * s_10 * p_dif * scale;
 }
-//390:2119 early(){
-//	pops=sim.subpopulations;
-//	for(i in 1:(length(sim.subpopulations)-1)){
-//		pop=sim.subpopulations[i];
-//		//		cat(c(format("%d", length(pop.genomes)), " "));
-//		cat(c(format("%.2f", sum(pop.genomes.countOfMutationsOfType(m0)/length(pop.genomes))), " "));
-//	}
-//	cat("\n");
-//}
-424 late() {
+
+
+
+423 late() {
 	cat(c(simid, " "));
 	ninds_pops = c(0, 12, 66, 12, 23, 10, 13, 13, 11, 9, 10);
 	rep = 0;
