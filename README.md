@@ -27,22 +27,29 @@ Despite multiple colonisation events
 ## Demography simulation with `ms`
 
 
-Georgia: One split vs two splits
+Georgia: earlier split vs same splits
 cont_resident: constant vs decrease
 gene flow: nomig, mig
 
-Model 1: All 10 populations split at the same time
+
 
 Model 1-1-1: one split, constant, nomig
 Model 1-1-2: one split, constant, mig
 Model 1-2-1: one split, decrease, nomig
 Model 1-2-2: one split, decrease, mig
-Model 2-1-1: two splits, constant, nomig
-Model 2-1-2: two splits, constant, mig
-Model 2-2-1: two splits, decrease, nomig
-Model 2-2-2: two splits, decrease, mig
+Model 2-1-1: Geo first, constant, nomig
+Model 2-1-2: Geo first, constant, mig
+Model 2-1-3: Geo first, constant, more splits
+Model 2-2-1: Geo first, decrease, nomig
+Model 2-2-2: Geo first, decrease, mig
+Model 2-2-3: Geo first, decrease, more splits
 
+```bash
 
+random=`shuf -i 1-1000000000 -n 1`
+awk -v simid=test -v seed=$random -v logfile=test.log -v nsites=1 -f scripts/write_config_model_2_1_3.awk list/pop_nhaps.txt 
+
+```
 
 ```bash
 
@@ -143,6 +150,16 @@ do
 done
 
 ```
+
+
+
+
+
+### Revision 1. Additional scenarios with different split times among 4 resident populations
+
+Instead of T_split, I have 5 values: T_split_mac, T_split_mal, T_split_cre, T_split_cont, T_split_short.
+
+
 
 ## Computation of blackcap summary statistics
 

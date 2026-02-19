@@ -19,6 +19,19 @@ func logunif(min, max){
         return exp(unif(log(min), log(max)))
 }
 
+func max(arr,     i, m, first) {
+        first = 1
+        for (i in arr){
+                if(first){
+                        m = arr[i]
+                        first = 0
+                }
+                else if(arr[i] > m){
+                        m = arr[i]
+                }
+        }
+        return m
+}
 
 func print_nseqs(nseqs,    i){
         printf "nseqs"
@@ -37,4 +50,6 @@ func print_Ns_N0(Ns_N0,    i){
         }
         printf "\n"
 }
+
+
 
