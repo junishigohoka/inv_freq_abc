@@ -198,7 +198,7 @@ NR!=FNR{
 }
 END{
         # Print headder
-        if(simid==1){
+        if(simid==0){
                 print_header(pops)
         }
         # Get summary stats

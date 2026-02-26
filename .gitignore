@@ -13,4 +13,5 @@ output/demography/ms/model_2_2_2/
 output/demography/ms/old/
 output/inv/slim/sim_inv_1/
 output/inv/slim/sim_inv_2/
-output/
+output/*
+*~

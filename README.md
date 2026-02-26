@@ -46,13 +46,6 @@ Model 2-2-3: Geo first, decrease, more splits
 
 ```bash
 
-random=`shuf -i 1-1000000000 -n 1`
-awk -v simid=test -v seed=$random -v logfile=test.log -v nsites=1 -f scripts/write_config_model_2_1_3.awk list/pop_nhaps.txt 
-
-```
-
-```bash
-
 #for model in model_1_1_1 model_1_1_2 model_1_2_1 model_1_2_2 model_2_1_1 model_2_1_2 model_2_2_1 model_2_2_2
 for model in model_1_1_2 model_1_2_2 model_2_1_2 model_2_2_2
 do
@@ -158,6 +151,94 @@ done
 ### Revision 1. Additional scenarios with different split times among 4 resident populations
 
 Instead of T_split, I have 5 values: T_split_mac, T_split_mal, T_split_cre, T_split_cont, T_split_short.
+Scripts were edited for model_2_1_3 and model_2_2_3.
+
+
+For each model, I ran 1,000,000 simulations by submitting an array job of 10,000, each of which runs 100.
+
+```bash
+
+for model in model_2_1_3 model_2_2_3
+do
+        for i in {0..99}
+        do
+                outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+                mkdir -p $outdir
+                for j in {0..99}
+                do
+                        outprefix=`printf "%s_%02d_%02d" $model $i $j`
+                done
+        done
+done 
+
+
+for model in model_2_1_3 model_2_2_3
+do
+    qsub scripts/sim_ms_qsub.sh -m $model -p list/pop_nhaps.txt -d $PWD/scripts -n 100 -l 1000
+done
+
+
+
+```
+
+
+
+
+
+Concatenated out files
+```bash
+for model in model_2_1_3 model_2_2_3
+do
+        for i in {0..99}
+        do
+                outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+                for j in {0..99}
+                do
+                        outprefix=`printf "%s_%02d_%02d" $model $i $j`
+                        if [ -f $outdir/$outprefix.log ];then
+                                cat -e $outdir/$outprefix.out | grep "$" | sed 's/\$//' | awk -v n1=$i -v n2=$j -v outprefix=$outprefix 'BEGIN{n=n1*1e4 + n2*1e2}n1==0&&n2==0&&NR==1{print $0}NR>1{$1+=n;print $0}'
+                        fi
+                done
+        done > output/demography/ms/${model}_out.txt
+done  
+
+```
+
+Concatenated log files
+```bash
+
+for model in model_2_1_3 model_2_2_3
+do
+        for i in {0..99}
+        do
+                outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+                for j in {0..99}
+                do
+                        outprefix=`printf "%s_%02d_%02d" $model $i $j`
+                        if [ -f $outdir/$outprefix.log ];then
+                                cat -e $outdir/$outprefix.log | grep "$" | sed 's/\$//' | awk -v n1=$i -v n2=$j -v outprefix=$outprefix 'BEGIN{n=n1*1e4 + n2*1e2}n1==0&&n2==0&&NR==1{print $0}NR>1{$1+=n;print $0}'
+                        fi
+                done
+        done > output/demography/ms/${model}_log.txt
+done  
+
+```
+
+
+
+Then I removed output folders
+
+
+
+```bash
+
+for model in model_2_1_3 model_2_2_3
+do
+    bgzip output/demography/ms/${model}_out.txt
+    bgzip output/demography/ms/${model}_log.txt
+done
+
+```
 
 
 

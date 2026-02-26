@@ -6,10 +6,7 @@ func get_Ns_N0(npops, Ns_N0,    i){
                 if(i <= 3){ # Georgia, medlong, short
                         Ns_N0[i] = logunif(1, 100)
                 }
-                else if( i == 4){ # cont_res
-                        Ns_N0[i] = 1
-                }
-                else{ # islands
+                else{ # cont_res and islands
                         Ns_N0[i] = logunif(0.01, 1)
                 }
         }
