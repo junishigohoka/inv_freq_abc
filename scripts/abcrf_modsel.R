@@ -1,9 +1,16 @@
-setwd("/home/ishigohoka/projects/Miriam/PhD/PhD/inv_freq_abc/output/demography/abcrf")
+#setwd("/home/ishigohoka/projects/Miriam/PhD/PhD/inv_freq_abc/output/demography/abcrf")
 
+
+#if (!requireNamespace("abcrf", quietly = TRUE)) {
+#  install.packages("abcrf", lib = "~/R/x86_64-pc-linux-gnu-library/4.2")
+#}
 library(abcrf)
 
+setwd("/fml/ag-pallares/jishigohoka/projects/inv_freq_abc/output/demography/abcrf")
 
-models <- paste0("model_", c("1_1_1", "1_1_2", "1_2_1", "1_2_2", "2_1_1", "2_1_2", "2_2_1", "2_2_2"))
+
+
+models <- paste0("model_", c("1_1_1", "1_1_2", "1_2_1", "1_2_2", "2_1_1", "2_1_2", "2_1_3", "2_1_4", "2_2_1", "2_2_2", "2_2_3", "2_2_4"))
 
 
 
@@ -75,6 +82,7 @@ if(length(list.files(pattern="sim_models.rds"))==0){
         # Reference table
         ref_tab <- do.call(rbind, d_list)
         ref_tab <- ref_tab[, -c(1, ncol(ref_tab))]
+
         #ref_tab <- cbind(data.frame(model = sim_models), ref_tab)
 
 
@@ -96,7 +104,7 @@ if(length(list.files(pattern="sim_models.rds"))==0){
                           data = ref_tab,
                           ntree = 1000,
                           paral = T,
-                          ncores = 8
+                          ncores = 16
         )
 
 
@@ -109,7 +117,7 @@ if(length(list.files(pattern="sim_models.rds"))==0){
                 "model_rf.rds"
         )
         pdf("err_abcrf.pdf")
-        err_abcrf <- err.abcrf(model_rf, training = ref_tab, paral = T)
+        err_abcrf <- err.abcrf(model_rf, training = ref_tab, paral = T, ncores = 16)
         dev.off()
         saveRDS(err_abcrf, "err_abcrf.rds")
 
@@ -119,7 +127,8 @@ if(length(list.files(pattern="sim_models.rds"))==0){
                              training = ref_tab,
                              ntree = 1000,
                              paral = T,
-                             paral.predict = T
+                             paral.predict = T,
+                             ncores = 16
         )
         saveRDS(modsel_rf, "modsel_rf.rds")
 }else{
@@ -132,7 +141,23 @@ if(length(list.files(pattern="sim_models.rds"))==0){
         model_rf <- readRDS("model_rf.rds")
         nsims <- readRDS("nsims.rds")
         sim_models <- readRDS("sim_models.rds")
-        err_abcrf <- readRDS("err_abcrf.rds")
+        if(file.exists("err_abcrf.rds")){
+                err_abcrf <- readRDS("err_abcrf.rds")
+        }else{
+                pdf("err_abcrf.pdf")
+                err_abcrf <- err.abcrf(model_rf, training = ref_tab, paral = T, ncores = 16)
+                dev.off()
+        }
+        # Model selection
+        modsel_rf <- predict(object = model_rf,
+                             obs = d_obs,
+                             training = ref_tab,
+                             ntree = 1000,
+                             paral = T,
+                             paral.predict = T,
+                             ncores = 16
+        )
+        saveRDS(modsel_rf, "modsel_rf.rds")
 }
 
 
@@ -141,7 +166,7 @@ if(length(list.files(pattern="sim_models.rds"))==0){
 
 
 
-modsel_rf <- readRDS("modsel_rf.rds")
+# modsel_rf <- readRDS("modsel_rf.rds")
 
 
 

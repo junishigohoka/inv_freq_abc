@@ -158,21 +158,22 @@ For each model, I ran 1,000,000 simulations by submitting an array job of 10,000
 
 ```bash
 
-for model in model_2_1_3 model_2_2_3
+for model in model_2_1_4 model_2_2_4 # model_2_1_3 model_2_2_3
 do
         for i in {0..99}
         do
-                outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+                #outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+                outdir=`printf "/tmp/global2/jishigohoka/inv_freq_abc/output/demography/ms/%s/%02d" $model $i`
                 mkdir -p $outdir
-                for j in {0..99}
-                do
-                        outprefix=`printf "%s_%02d_%02d" $model $i $j`
-                done
+                #for j in {0..99}
+                #do
+                #        outprefix=`printf "%s_%02d_%02d" $model $i $j`
+                #done
         done
 done 
 
 
-for model in model_2_1_3 model_2_2_3
+for model in model_2_1_4  model_2_2_4 # model_2_1_3 model_2_2_3
 do
     qsub scripts/sim_ms_qsub.sh -m $model -p list/pop_nhaps.txt -d $PWD/scripts -n 100 -l 1000
 done
@@ -187,14 +188,15 @@ done
 
 Concatenated out files
 ```bash
-for model in model_2_1_3 model_2_2_3
+for model in model_2_1_4 model_2_2_4 #model_2_1_3 model_2_2_3
 do
         for i in {0..99}
         do
-                outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+            #outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+            outdir=`printf "/tmp/global2/jishigohoka/inv_freq_abc/output/demography/ms/%s/%02d" $model $i`
                 for j in {0..99}
                 do
-                        outprefix=`printf "%s_%02d_%02d" $model $i $j`
+                    outprefix=`printf "%s_%02d_%02d" $model $i $j`
                         if [ -f $outdir/$outprefix.log ];then
                                 cat -e $outdir/$outprefix.out | grep "$" | sed 's/\$//' | awk -v n1=$i -v n2=$j -v outprefix=$outprefix 'BEGIN{n=n1*1e4 + n2*1e2}n1==0&&n2==0&&NR==1{print $0}NR>1{$1+=n;print $0}'
                         fi
@@ -207,11 +209,12 @@ done
 Concatenated log files
 ```bash
 
-for model in model_2_1_3 model_2_2_3
+for model in model_2_1_4 model_2_2_4 # model_2_1_3 model_2_2_3
 do
         for i in {0..99}
         do
-                outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+            #outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+            outdir=`printf "/tmp/global2/jishigohoka/inv_freq_abc/output/demography/ms/%s/%02d" $model $i`
                 for j in {0..99}
                 do
                         outprefix=`printf "%s_%02d_%02d" $model $i $j`
@@ -232,7 +235,7 @@ Then I removed output folders
 
 ```bash
 
-for model in model_2_1_3 model_2_2_3
+for model in model_2_1_4 model_2_2_4 # model_2_1_3 model_2_2_3
 do
     bgzip output/demography/ms/${model}_out.txt
     bgzip output/demography/ms/${model}_log.txt
@@ -434,18 +437,38 @@ Some of the observed summary stats were outside the range of simulations.
 ## ABC random forest
 
 ### Model selection
-
+<!--
 ```bash
 
 sbatch scripts/abcrf_modsel.sh
 
 ```
+-->
+
+In revision, I ran `abcrf` with
+
+```bash
+
+qsub scripts/abcrf_modsel_qsub.sh
+
+```
+
 
 model_2_1_2 was chosen by the random forest.
 
 ```
   selected model votes model1 votes model2 votes model3 votes model4 votes model5 votes model6 votes model7 votes model8 post.proba
 1    model_2_1_2            3           52            0           25           45          600           35          240  0.6979167
+```
+
+
+In revision 1 with model_2_1_3, model_2_1_4, model_2_2_3, and model_2_2_4 
+
+
+model_2_1_2 was still chosen.
+```
+  selected model votes model1 votes model2 votes model3 votes model4 votes model5 votes model6 votes model7 votes model8 votes model9 votes model10 votes model11 votes model12 post.proba
+1    model_2_1_2            0           39            0           15           49          365          136          142           20           168            36            30  0.6212667
 ```
 
 ### Parameter inference
@@ -462,7 +485,11 @@ done
 
 I performed parameter inference for each of the 36 parameters of model_2_1_2
 
+
+
+
 ```bash
+
 for i in {1..36}
 do
         sbatch scripts/abcrf_parinf.sh $i

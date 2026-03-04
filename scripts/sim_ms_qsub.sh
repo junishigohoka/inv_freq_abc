@@ -4,13 +4,13 @@
 #$ -t 1-10000
 #$ -l cpu=1
 #$ -l h_vmem=12G
-#$ -l h_rt=00:30:00
+#$ -l h_rt=01:00:00
 # Merge stdout and stderr. The job will create only one output file which
 # contains both the real output and the error messages.
 #$ -N ms
 #$ -j n
-#$ -o logs/sim_ms_qsub_$JOB_ID.$TASK_ID.out
-#$ -e logs/sim_ms_qsub_$JOB_ID.$TASK_ID.err
+#$ -o logs/$JOB_ID.out
+#$ -e logs/$JOB_ID.err
 # Use /bin/bash to execute this script
 #Run job from current working directory
 #$ -cwd
@@ -31,8 +31,10 @@ while test $# -gt 0; do
       echo "-h|--help       Show brief help"
       echo "-m|--model      Model. There are three factors"
       echo "                There are 2 models"
-      echo "                model_2_1_3: Geo first, constant, more splits"
-      echo "                model_2_2_3: Geo first, decrease, more splits"
+      echo "                model_2_1_3: Geo first, constant, more splits from medlong"
+      echo "                model_2_1_4: Geo first, constant, more splits from short"
+      echo "                model_2_2_3: Geo first, decrease, more splits from medlong"
+      echo "                model_2_2_4: Geo first, decrease, more splits from short"
       echo "-l|--nsites     Number of independent sites to be simulated with ms [1]"
       echo "-n|--nsims      Number of simulation replicates [1]"
       echo "-p|--popnhaps   Path to a file describing number of haploids per population in two columns: population name; number of haploids"
@@ -95,9 +97,9 @@ if [ -z $model ];then
         exit
 fi
 
-modelcheck=`echo $model | awk '/^model_2_[1-2]_3$/'`
+modelcheck=`echo $model | awk '/^model_2_[1-2]_[3-4]$/'`
 if [ -z $modelcheck ];then
-        echo "Err: model $model is not in the format /^model_2_[1-2]_3$/"
+        echo "Err: model $model is not in the format /^model_2_[1-2]_[3-4]$/"
         exit
 fi
 
@@ -111,7 +113,7 @@ j=$(((SGE_TASK_ID - 1) % 100))
 
 
 
-outdir=`printf "output/demography/ms/%s/%02d" $model $i`
+outdir=`printf "/tmp/global2/jishigohoka/inv_freq_abc/output/demography/ms/%s/%02d" $model $i`
 outprefix=`printf "%s_%02d_%02d" $model $i $j`
 
 out=$outdir/$outprefix
